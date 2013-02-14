@@ -26,20 +26,21 @@ public class ZombieHandler
 		this.setPants(livingEntity, playerInventory);
         this.setWeapon(livingEntity, playerInventory);
         
-//		if(this.configHandler.getCanDropEquip())
-//		{
-//			EntityEquipment ee = livingEntity.getEquipment();
-//			ee.setBootsDropChance(100);
-//			ee.setChestplateDropChance(100);
-//			ee.setHelmetDropChance(100);
-//			ee.setItemInHandDropChance(100);
-//			ee.setLeggingsDropChance(100);
-//		}
+		if(this.configHandler.getCanDropEquip())
+		{
+			EntityEquipment ee = livingEntity.getEquipment();
+
+			ee.setHelmetDropChance(this.configHandler.getDropChances().get(0));
+			ee.setChestplateDropChance(this.configHandler.getDropChances().get(1));
+			ee.setLeggingsDropChance(this.configHandler.getDropChances().get(2));
+			ee.setBootsDropChance(this.configHandler.getDropChances().get(3));
+			ee.setItemInHandDropChance(this.configHandler.getDropChances().get(4));
+		}
      
-//		if(this.configHandler.getEffects().size() > 0)
-//		{
-//			this.SetPotionEffects(livingEntity);
-//		}
+		if(this.configHandler.getEffects().size() > 0)
+		{
+			this.SetPotionEffects(livingEntity);
+		}
 	}
 
 	private void SetPotionEffects(LivingEntity livingEntity)

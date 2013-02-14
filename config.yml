@@ -1,7 +1,21 @@
-# Add Additional Effects to the spawned Zomble
+# Add Additional Effects to the spawned Zombie 
+# BE VERY CAREFUL WITH SETTING THE EFFECTS as example: 
+# if Increase_Damage is too high players die instantly without getting a deathscreen.
+# They can still move but can't do anything else.
 Effects:
-- SPEED
-- INCREASE_DAMAGE
+  SPEED: 0
+  SLOW: 0
+  INCREASE_DAMAGE: 0
+  DAMAGE_RESISTANCE: 0
+  FIRE_RESISTANCE: 0
+  JUMP: 0
 
-## Define wheater the spawned Zomble should drop their equipment or not
+# Define whether the spawned Zombie should drop their equipment or not
 CanDropEquip: false
+
+# Define the drop chance of each item. Only applies if CanDropEquip is set to true
+HelmetChance: 100.0
+ChestChance: 100.0
+PantsChance: 100.0
+BootsChance: 100.0
+ItemInHandChance: 100.0

@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
 
-import org.bukkit.Effect;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.potion.PotionEffect;
@@ -22,25 +20,47 @@ public class ConfigHandler
 	private ZombieResurrection plugin;
 	private File configFile;
     private FileConfiguration config;
+	private boolean canDropEquip;
+	private ArrayList<Float> dropChances;
     
     public ConfigHandler(ZombieResurrection plugin)
     {
-//    	this.plugin = plugin;
-//    	this.configFile = new File(this.plugin.getDataFolder(), "config.yml");
-//    	
-//	    try 
-//	    {
-//	    	this.FirstRun();
-//	    } 
-//	    catch (Exception e) 
-//	    {
-//	        e.printStackTrace();
-//	    }
-//	    
-//	    this.config = new YamlConfiguration();
-//	    this.LoadYamls();
+    	this.plugin = plugin;
+    	this.configFile = new File(this.plugin.getDataFolder(), "config.yml");
+    	
+	    try 
+	    {
+	    	this.FirstRun();
+	    } 
+	    catch (Exception e) 
+	    {
+	        e.printStackTrace();
+	    }
+	    
+	    this.config = new YamlConfiguration();
+	    this.LoadYamls();
     }
     
+    public ArrayList<PotionEffect> getEffects() 
+	{
+		return this.potionEffects;
+	}
+
+	public int getModifiedHp() 
+	{
+		return 0;
+	}
+
+	public boolean getCanDropEquip() 
+	{
+		return this.canDropEquip;
+	}
+	
+	public ArrayList<Float> getDropChances() 
+	{
+		return this.dropChances;
+	}
+	
 	private void FirstRun() throws Exception
 	{
 	    if(!this.configFile.exists())
@@ -104,25 +124,49 @@ public class ConfigHandler
 	
 	private void LoadValues() 
 	{
-		List<String> list = this.config.getStringList("Effects");
-		for(String effect : list)
-		{
-			this.potionEffects.add(new PotionEffect(PotionEffectType.getByName(effect), Integer.MAX_VALUE, 0));
-		}
-	}
+		this.setPotionEffects();
+		this.setCanDropEquip();
+		this.setDropChances();
+	}	
 	
-	public ArrayList<PotionEffect> getEffects() 
+	private void setDropChances() 
 	{
-		return this.potionEffects;
+		this.dropChances = new ArrayList<Float>();
+		this.dropChances.add((float)this.config.getDouble("HelmetChance"));
+		this.dropChances.add((float)this.config.getDouble("ChestChance"));
+		this.dropChances.add((float)this.config.getDouble("PantsChance"));
+		this.dropChances.add((float)this.config.getDouble("BootsChance"));
+		this.dropChances.add((float)this.config.getDouble("ItemInHandChance"));
 	}
 
-	public int getModifiedHp() 
+	private void setCanDropEquip() 
 	{
-		return 0;
+		this.canDropEquip = this.config.getBoolean("CanDropEquip");
 	}
 
-	public boolean getCanDropEquip() 
+	private void setPotionEffects()
 	{
-		return false;
+		this.potionEffects = new ArrayList<PotionEffect>();
+		
+		if(this.config.getInt("Effects.SPEED") > 0)
+		{
+			this.potionEffects.add(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, this.config.getInt("Effects.SPEED")));
+		}
+		if(this.config.getInt("Effects.INCREASE_DAMAGE") > 0)
+		{
+			this.potionEffects.add(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, this.config.getInt("Effects.INCREASE_DAMAGE")));
+		}
+		if(this.config.getInt("Effects.DAMAGE_RESISTANCE") > 0)
+		{
+			this.potionEffects.add(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, this.config.getInt("Effects.DAMAGE_RESISTANCE")));
+		}
+		if(this.config.getInt("Effects.FIRE_RESISTANCE") > 0)
+		{
+			this.potionEffects.add(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, this.config.getInt("Effects.FIRE_RESISTANCE")));
+		}
+		if(this.config.getInt("Effects.JUMP") > 0)
+		{
+			this.potionEffects.add(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, this.config.getInt("Effects.JUMP")));
+		}
 	}
 }
