@@ -5,7 +5,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import com.gmail.mikeundead.Handlers.ConfigHandler;
@@ -23,15 +22,12 @@ public class PlayerDeathListener implements Listener
 	@EventHandler
     public void onPlayerDeath(PlayerDeathEvent event)
     {
-		if(event.getEntity() instanceof Player)
-		{   
-			this.HandlePlayerDeath(event);
-		}
+		this.HandlePlayerDeath(event);
 	}
 
-	private void HandlePlayerDeath(EntityDeathEvent event)
+	private void HandlePlayerDeath(PlayerDeathEvent event)
 	{
-		Player player = (Player) event.getEntity();
+		Player player = event.getEntity();
 		if(player.hasPermission("zombieressurrection.zombiespawn"))
 		{   		
 			System.out.print(player.getName());

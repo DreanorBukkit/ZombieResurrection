@@ -13,11 +13,11 @@ public class ZombieResurrection extends JavaPlugin
         PlayerDeathListener entityDeathListener = new PlayerDeathListener(configHandler);
         this.getServer().getPluginManager().registerEvents(entityDeathListener, this);
 
-        this.getLogger().info("ZombieResurrection  has been enabled.");
+        this.getLogger().info("ZombieResurrection has been enabled.");
 	}
 
 	public void onDisable()
     {
-        this.getLogger().info("ZombieResurrection  has been disabled.");
+        this.getLogger().info("ZombieResurrection has been disabled.");
 	}
 }

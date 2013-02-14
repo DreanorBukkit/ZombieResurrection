@@ -2,6 +2,7 @@
 # BE VERY CAREFUL WITH SETTING THE EFFECTS as example: 
 # if Increase_Damage is too high players die instantly without getting a deathscreen.
 # They can still move but can't do anything else.
+
 Effects:
   SPEED: 0
   SLOW: 0

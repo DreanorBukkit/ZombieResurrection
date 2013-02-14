@@ -2,7 +2,6 @@ package com.gmail.mikeundead.Handlers;
 
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -11,80 +10,85 @@ import org.bukkit.potion.PotionEffect;
 
 public class ZombieHandler
 {
-    private ConfigHandler configHandler;
+	private ConfigHandler configHandler;
 
-    public ZombieHandler(ConfigHandler config)
+	public ZombieHandler(ConfigHandler config)
 	{
 		this.configHandler = config;
 	}
 
-    public void EquipZombie(LivingEntity livingEntity, String playername, PlayerInventory playerInventory)
+	public void EquipZombie(LivingEntity monster, String playername, PlayerInventory playerInventory)
 	{
-    	this.setHelmet(livingEntity, playername);
-		this.setChestplate(livingEntity, playerInventory);
-		this.setBoots(livingEntity, playerInventory);
-		this.setPants(livingEntity, playerInventory);
-        this.setWeapon(livingEntity, playerInventory);
-        
+		this.setHelmet(monster, playername);
+		this.setChestplate(monster, playerInventory);
+		this.setBoots(monster, playerInventory);
+		this.setPants(monster, playerInventory);
+		this.setWeapon(monster, playerInventory);
+
 		if(this.configHandler.getCanDropEquip())
 		{
-			EntityEquipment ee = livingEntity.getEquipment();
-
-			ee.setHelmetDropChance(this.configHandler.getDropChances().get(0));
-			ee.setChestplateDropChance(this.configHandler.getDropChances().get(1));
-			ee.setLeggingsDropChance(this.configHandler.getDropChances().get(2));
-			ee.setBootsDropChance(this.configHandler.getDropChances().get(3));
-			ee.setItemInHandDropChance(this.configHandler.getDropChances().get(4));
+			this.SetDropChances(monster, this.configHandler.getDropChances().get(0), 
+										 this.configHandler.getDropChances().get(1), 
+										 this.configHandler.getDropChances().get(2), 
+										 this.configHandler.getDropChances().get(3), 
+										 this.configHandler.getDropChances().get(4));
 		}
-     
+		else
+		{
+			this.SetDropChances(monster, 0, 0, 0, 0, 0);
+		}
+
 		if(this.configHandler.getEffects().size() > 0)
 		{
-			this.SetPotionEffects(livingEntity);
+			this.SetPotionEffects(monster);
 		}
 	}
 
-	private void SetPotionEffects(LivingEntity livingEntity)
+	private void SetDropChances(LivingEntity monster, float helmChance, float chestChance, float pantsChance, float bootsChance, float weaponChance) 
+	{
+		monster.getEquipment().setHelmetDropChance(helmChance);
+		monster.getEquipment().setChestplateDropChance(chestChance);
+		monster.getEquipment().setLeggingsDropChance(pantsChance);
+		monster.getEquipment().setBootsDropChance(bootsChance);
+		monster.getEquipment().setItemInHandDropChance(weaponChance);
+	}
+
+	private void SetPotionEffects(LivingEntity monster)
 	{
 		for(PotionEffect effect : this.configHandler.getEffects())
 		{
-			livingEntity.addPotionEffect(effect);
+			monster.addPotionEffect(effect);
 		}
 	}
 
 	private void setWeapon(LivingEntity monster, PlayerInventory playerInventory)
 	{
-		EntityEquipment ee = monster.getEquipment();
-		ee.setItemInHand(playerInventory.getItemInHand());
+		monster.getEquipment().setItemInHand(playerInventory.getItemInHand());
 	}
 
 	private void setHelmet(LivingEntity monster, String playername)
 	{
-        EntityEquipment ee = monster.getEquipment();
-
 		ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
 		String skullName = playername;
 		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 		skullMeta.setOwner(skullName);
 		skull.setItemMeta(skullMeta);
-		
-        ee.setHelmet(skull);
+
+		monster.getEquipment().setHelmet(skull);
 	}
 
 	private void setChestplate(LivingEntity monster, PlayerInventory playerInventory)
 	{
-		EntityEquipment ee = monster.getEquipment();
-		ee.setChestplate(playerInventory.getChestplate());
+		monster.getEquipment().setChestplate(playerInventory.getChestplate());
 	}
 
 	private void setPants(LivingEntity monster, PlayerInventory playerInventory)
 	{
-		EntityEquipment ee = monster.getEquipment();
-		ee.setLeggings(playerInventory.getLeggings());
+		monster.getEquipment().setLeggings(playerInventory.getLeggings());
 	}
 
 	private void setBoots(LivingEntity monster, PlayerInventory playerInventory)
 	{
-		EntityEquipment ee = monster.getEquipment();
-		ee.setBoots(playerInventory.getBoots());
+		monster.getEquipment().setBoots(playerInventory.getBoots());
 	}
 }

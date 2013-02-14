@@ -46,11 +46,6 @@ public class ConfigHandler
 		return this.potionEffects;
 	}
 
-	public int getModifiedHp() 
-	{
-		return 0;
-	}
-
 	public boolean getCanDropEquip() 
 	{
 		return this.canDropEquip;
