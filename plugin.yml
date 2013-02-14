@@ -1,6 +1,6 @@
 name: ZombieResurrection
 main: com.gmail.mikeundead.ZombieResurrection
-version: 1.0.1
+version: 1.0.2
 description: This plugin spawns a Zombie with your armor, weapon and face at your death location.
 author: asc_Dreanor
 website: http://dev.bukkit.org/server-mods/zombieresurrection

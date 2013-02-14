@@ -6,21 +6,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 import com.gmail.mikeundead.Handlers.ConfigHandler;
 import com.gmail.mikeundead.Handlers.ZombieHandler;
 
-public class EntityDeathListener implements Listener
+public class PlayerDeathListener implements Listener
 {
     private ConfigHandler configHandler;
 	
-    public EntityDeathListener(ConfigHandler config)
+    public PlayerDeathListener(ConfigHandler config)
 	{
 		this.configHandler = config;
 	}
 
 	@EventHandler
-    public void onEntityDeath(EntityDeathEvent event)
+    public void onPlayerDeath(PlayerDeathEvent event)
     {
 		if(event.getEntity() instanceof Player)
 		{   
