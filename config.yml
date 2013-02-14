@@ -1,0 +1,7 @@
+# Add Additional Effects to the spawned Zomble
+Effects:
+- SPEED
+- INCREASE_DAMAGE
+
+## Define wheater the spawned Zomble should drop their equipment or not
+CanDropEquip: false
