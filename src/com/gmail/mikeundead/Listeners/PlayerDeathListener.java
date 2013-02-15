@@ -28,10 +28,8 @@ public class PlayerDeathListener implements Listener
 	private void HandlePlayerDeath(PlayerDeathEvent event)
 	{
 		Player player = event.getEntity();
-		if(player.hasPermission("zombieressurrection.zombiespawn"))
+		if(player.hasPermission("zombieresurrection.zombiespawn"))
 		{   		
-			System.out.print(player.getName());
-
 			LivingEntity zombie = (LivingEntity) player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
 			ZombieHandler zombieHandler = new ZombieHandler(this.configHandler);
 			zombieHandler.EquipZombie(zombie, player.getName(), player.getInventory());
