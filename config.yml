@@ -11,12 +11,5 @@ Effects:
   FIRE_RESISTANCE: 0
   JUMP: 0
 
-# Define whether the spawned Zombie should drop their equipment or not
+# Define whether the spawned Zombie should pickup all Items from the player and drop them on death or not
 CanDropEquip: false
-
-# Define the drop chance of each item. Only applies if CanDropEquip is set to true
-HelmetChance: 100.0
-ChestChance: 100.0
-PantsChance: 100.0
-BootsChance: 100.0
-ItemInHandChance: 100.0

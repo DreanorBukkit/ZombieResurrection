@@ -24,14 +24,10 @@ public class ZombieHandler
 		this.setBoots(monster, playerInventory);
 		this.setPants(monster, playerInventory);
 		this.setWeapon(monster, playerInventory);
-
+	
 		if(this.configHandler.getCanDropEquip())
 		{
-			this.SetDropChances(monster, this.configHandler.getDropChances().get(0), 
-										 this.configHandler.getDropChances().get(1), 
-										 this.configHandler.getDropChances().get(2), 
-										 this.configHandler.getDropChances().get(3), 
-										 this.configHandler.getDropChances().get(4));
+			this.SetDropChances(monster, 0, 100, 100, 100, 0);
 		}
 		else
 		{
@@ -44,13 +40,13 @@ public class ZombieHandler
 		}
 	}
 
-	private void SetDropChances(LivingEntity monster, float helmChance, float chestChance, float pantsChance, float bootsChance, float weaponChance) 
+	private void SetDropChances(LivingEntity monster, float i, float j, float k, float l, float m) 
 	{
-		monster.getEquipment().setHelmetDropChance(helmChance);
-		monster.getEquipment().setChestplateDropChance(chestChance);
-		monster.getEquipment().setLeggingsDropChance(pantsChance);
-		monster.getEquipment().setBootsDropChance(bootsChance);
-		monster.getEquipment().setItemInHandDropChance(weaponChance);
+		monster.getEquipment().setHelmetDropChance(i);
+		monster.getEquipment().setChestplateDropChance(j);
+		monster.getEquipment().setLeggingsDropChance(k);
+		monster.getEquipment().setBootsDropChance(l);
+		monster.getEquipment().setItemInHandDropChance(m);
 	}
 
 	private void SetPotionEffects(LivingEntity monster)

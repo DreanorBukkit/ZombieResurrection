@@ -21,7 +21,6 @@ public class ConfigHandler
 	private File configFile;
     private FileConfiguration config;
 	private boolean canDropEquip;
-	private ArrayList<Float> dropChances;
     
     public ConfigHandler(ZombieResurrection plugin)
     {
@@ -49,11 +48,6 @@ public class ConfigHandler
 	public boolean getCanDropEquip() 
 	{
 		return this.canDropEquip;
-	}
-	
-	public ArrayList<Float> getDropChances() 
-	{
-		return this.dropChances;
 	}
 	
 	private void FirstRun() throws Exception
@@ -121,19 +115,8 @@ public class ConfigHandler
 	{
 		this.setPotionEffects();
 		this.setCanDropEquip();
-		this.setDropChances();
 	}	
 	
-	private void setDropChances() 
-	{
-		this.dropChances = new ArrayList<Float>();
-		this.dropChances.add((float)this.config.getDouble("HelmetChance"));
-		this.dropChances.add((float)this.config.getDouble("ChestChance"));
-		this.dropChances.add((float)this.config.getDouble("PantsChance"));
-		this.dropChances.add((float)this.config.getDouble("BootsChance"));
-		this.dropChances.add((float)this.config.getDouble("ItemInHandChance"));
-	}
-
 	private void setCanDropEquip() 
 	{
 		this.canDropEquip = this.config.getBoolean("CanDropEquip");
