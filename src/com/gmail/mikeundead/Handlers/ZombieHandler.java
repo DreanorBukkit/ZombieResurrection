@@ -27,7 +27,7 @@ public class ZombieHandler
 	
 		if(this.configHandler.getCanDropEquip())
 		{
-			this.SetDropChances(monster, 0, 100, 100, 100, 0);
+			this.SetDropChances(monster, 100, 100, 100, 100, 0);
 		}
 		else
 		{

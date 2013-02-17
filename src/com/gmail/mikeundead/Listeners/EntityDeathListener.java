@@ -75,7 +75,11 @@ public class EntityDeathListener implements Listener
 			
 			if(this.configHandler.getCanDropEquip())
 			{
-				player.getInventory().addItem(player.getInventory().getHelmet());
+				if(player.getInventory().getHelmet() != null)
+				{
+					player.getInventory().addItem(player.getInventory().getHelmet());
+				}
+				
 				this.playerInventory.put(player.getName(), player.getInventory().getContents());
 				droppedItems.clear();
 			}
