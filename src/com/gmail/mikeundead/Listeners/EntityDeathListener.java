@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -33,8 +34,28 @@ public class EntityDeathListener implements Listener
     {
 		if(event.getEntity() instanceof Player)
 		{
+			boolean env = this.configHandler.getZombieSpawnCondition().getEnv();
+			boolean pve = this.configHandler.getZombieSpawnCondition().getPvE();
+			boolean pvp = this.configHandler.getZombieSpawnCondition().getPvP();
+			
 			Player player = (Player) event.getEntity();
-			this.HandlePlayerDeath(player, event.getDrops());
+	        EntityDamageEvent lastdamage = player.getLastDamageCause();
+
+	        if(pvp && player.getKiller() instanceof Player)
+	        {
+	        	this.HandlePlayerDeath(player, event.getDrops());
+	        	return;
+	        }
+			if(pve && lastdamage.getEntity() instanceof Player == false && lastdamage.getEntity() instanceof LivingEntity)
+			{
+				this.HandlePlayerDeath(player, event.getDrops());
+	        	return;
+			}
+			if(env)
+			{
+		     	this.HandlePlayerDeath(player, event.getDrops());
+	        	return;
+			}
 		}
 		else if(event.getEntity() instanceof Zombie)
 		{
@@ -52,14 +73,17 @@ public class EntityDeathListener implements Listener
 				SkullMeta skullmeta = (SkullMeta) zombie.getEquipment().getHelmet().getItemMeta();
 				String owner = skullmeta.getOwner();
 
-				if(this.playerInventory.containsKey(owner))
+				if(this.configHandler.getcanPickupInventory())
 				{
-					for(ItemStack item : this.playerInventory.get(owner))
+					if(this.playerInventory.containsKey(owner))
 					{
-						droppedItems.add(item);
+						for(ItemStack item : this.playerInventory.get(owner))
+						{
+							droppedItems.add(item);
+						}
+						
+						this.playerInventory.remove(owner);
 					}
-					
-					this.playerInventory.remove(owner);
 				}
 			}
 		}

@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.gmail.mikeundead.ZombieResurrection;
+import com.gmail.mikeundead.util.SpawnConditions;
 
 public class ConfigHandler
 {
@@ -21,6 +22,10 @@ public class ConfigHandler
 	private File configFile;
     private FileConfiguration config;
 	private boolean canDropEquip;
+	private boolean canDropArmor;
+	private boolean canPickupInventory;
+	private boolean canDropPlayerHead;
+	private SpawnConditions zombieSpawnCondition;
     
     public ConfigHandler(ZombieResurrection plugin)
     {
@@ -48,6 +53,26 @@ public class ConfigHandler
 	public boolean getCanDropEquip() 
 	{
 		return this.canDropEquip;
+	}
+	
+	public boolean getCanDropArmor()
+	{
+		return this.canDropArmor;
+	}
+	
+	public SpawnConditions getZombieSpawnCondition()
+	{
+		return this.zombieSpawnCondition;
+	}
+	
+	public boolean getcanPickupInventory()
+	{
+		return this.canPickupInventory;
+	}
+	
+	public boolean getcanDropPlayerHead()
+	{
+		return this.canDropPlayerHead;
 	}
 	
 	private void FirstRun() throws Exception
@@ -115,8 +140,37 @@ public class ConfigHandler
 	{
 		this.setPotionEffects();
 		this.setCanDropEquip();
+		this.setCanPickupInventory();
+		this.setCanDropPlayerHead();
+		this.setCanDropArmor();
+		this.setZombieSpawnCondition();
 	}	
 	
+	private void setZombieSpawnCondition() 
+	{
+		boolean pvp = this.config.getBoolean("ZombieSpawnOnPvPDeath");
+		boolean pve = this.config.getBoolean("ZombieSpawnOnPvEDeath");
+		boolean env = this.config.getBoolean("ZombieSpawnOnEnvironmentDeath");
+		
+		
+		this.zombieSpawnCondition = new SpawnConditions(pvp, pve, env);
+	}
+
+	private void setCanDropArmor() 
+	{
+		this.canDropArmor = this.config.getBoolean("CanDropArmor");
+	}
+
+	private void setCanDropPlayerHead() 
+	{
+		this.canDropPlayerHead = this.config.getBoolean("CanDropPlayerHead");
+	}
+
+	private void setCanPickupInventory() 
+	{
+		this.canPickupInventory = this.config.getBoolean("CanPickupInventoryAndDrop");
+	}
+
 	private void setCanDropEquip() 
 	{
 		this.canDropEquip = this.config.getBoolean("CanDropEquip");

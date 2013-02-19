@@ -11,5 +11,20 @@ Effects:
   FIRE_RESISTANCE: 0
   JUMP: 0
 
+
 # Define whether the spawned Zombie should pickup all Items from the player and drop them on death or not
+# Please note that CanDropEquip affects all other statements
+
 CanDropEquip: false
+CanPickupInventoryAndDrop: false
+CanDropPlayerHead: false
+CanDropArmor: false
+
+
+# Define under which condition a Zombie should spawn
+# Having all 3 Deathtypes will spawn a Zombie on every death
+# Make sure that at least one condition is true, otherwise there will be no spawn at all
+
+ZombieSpawnOnPvPDeath: true
+ZombieSpawnOnPvEDeath: true
+ZombieSpawnOnEnvironmentDeath: true
