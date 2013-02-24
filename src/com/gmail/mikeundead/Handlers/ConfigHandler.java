@@ -152,7 +152,6 @@ public class ConfigHandler
 		boolean pve = this.config.getBoolean("ZombieSpawnOnPvEDeath");
 		boolean env = this.config.getBoolean("ZombieSpawnOnEnvironmentDeath");
 		
-		
 		this.zombieSpawnCondition = new SpawnConditions(pvp, pve, env);
 	}
 

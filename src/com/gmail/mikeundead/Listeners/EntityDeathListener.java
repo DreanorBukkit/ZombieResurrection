@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -22,7 +22,7 @@ public class EntityDeathListener implements Listener
 {
     private ConfigHandler configHandler;
 	private HashMap<String, ItemStack[]> playerInventory;
-	
+
     public EntityDeathListener(ConfigHandler config)
 	{
 		this.configHandler = config;
@@ -34,25 +34,23 @@ public class EntityDeathListener implements Listener
     {
 		if(event.getEntity() instanceof Player)
 		{
-			boolean env = this.configHandler.getZombieSpawnCondition().getEnv();
-			boolean pve = this.configHandler.getZombieSpawnCondition().getPvE();
-			boolean pvp = this.configHandler.getZombieSpawnCondition().getPvP();
-			
 			Player player = (Player) event.getEntity();
-	        EntityDamageEvent lastdamage = player.getLastDamageCause();
+			DamageCause damageCause = player.getLastDamageCause().getCause();
 
-	        if(pvp && player.getKiller() instanceof Player)
+	        if(this.IsPvPKill(damageCause, player))
 	        {
 	        	this.HandlePlayerDeath(player, event.getDrops());
 	        	return;
 	        }
-			if(pve && lastdamage.getEntity() instanceof Player == false && lastdamage.getEntity() instanceof LivingEntity)
-			{
-				this.HandlePlayerDeath(player, event.getDrops());
+	        else if(this.IsPvEKill(damageCause))
+	        {
+	        	System.out.println("pve");
+		     	this.HandlePlayerDeath(player, event.getDrops());
 	        	return;
-			}
-			if(env)
+	        }
+	        else if(this.IsEnviromentKill(damageCause))
 			{
+	        	System.out.println("env");
 		     	this.HandlePlayerDeath(player, event.getDrops());
 	        	return;
 			}
@@ -64,7 +62,51 @@ public class EntityDeathListener implements Listener
 		}
 	}
 
-	private void HandleZombieDeath(Zombie zombie, List<ItemStack> droppedItems) 
+	private boolean IsPvPKill(DamageCause damageCause, Player player)
+	{
+		boolean pvp = this.configHandler.getZombieSpawnCondition().getPvP();
+
+		if(pvp && player.getKiller() instanceof Player)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean IsPvEKill(DamageCause damageCause)
+	{
+		boolean pve = this.configHandler.getZombieSpawnCondition().getPvE();
+
+		if(pve)
+		{
+			if(damageCause == DamageCause.ENTITY_ATTACK || damageCause == DamageCause.ENTITY_EXPLOSION || damageCause == DamageCause.PROJECTILE)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean IsEnviromentKill(DamageCause damageCause)
+	{
+		boolean env = this.configHandler.getZombieSpawnCondition().getEnv();
+
+		if(env)
+		{
+			if(damageCause == DamageCause.ENTITY_ATTACK || damageCause == DamageCause.ENTITY_EXPLOSION)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private void HandleZombieDeath(Zombie zombie, List<ItemStack> droppedItems)
 	{
 		if(this.configHandler.getCanDropEquip())
 		{
@@ -81,7 +123,7 @@ public class EntityDeathListener implements Listener
 						{
 							droppedItems.add(item);
 						}
-						
+
 						this.playerInventory.remove(owner);
 					}
 				}
@@ -92,18 +134,18 @@ public class EntityDeathListener implements Listener
 	private void HandlePlayerDeath(Player player, List<ItemStack> droppedItems)
 	{
 		if(player.hasPermission("zombieresurrection.zombiespawn"))
-		{   		
+		{
 			LivingEntity zombie = (LivingEntity) player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
 			ZombieHandler zombieHandler = new ZombieHandler(this.configHandler);
 			zombieHandler.EquipZombie(zombie, player.getName(), player.getInventory());
-			
+
 			if(this.configHandler.getCanDropEquip())
 			{
 				if(player.getInventory().getHelmet() != null)
 				{
 					player.getInventory().addItem(player.getInventory().getHelmet());
 				}
-				
+
 				this.playerInventory.put(player.getName(), player.getInventory().getContents());
 				droppedItems.clear();
 			}
