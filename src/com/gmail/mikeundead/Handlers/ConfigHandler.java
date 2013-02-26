@@ -21,164 +21,152 @@ public class ConfigHandler
 	private ZombieResurrection plugin;
 	private File configFile;
     private FileConfiguration config;
-	private boolean canDropEquip;
 	private boolean canDropArmor;
 	private boolean canPickupInventory;
 	private boolean canDropPlayerHead;
 	private SpawnConditions zombieSpawnCondition;
-    
+
     public ConfigHandler(ZombieResurrection plugin)
     {
     	this.plugin = plugin;
     	this.configFile = new File(this.plugin.getDataFolder(), "config.yml");
-    	
-	    try 
+
+	    try
 	    {
 	    	this.FirstRun();
-	    } 
-	    catch (Exception e) 
+	    }
+	    catch (Exception e)
 	    {
 	        e.printStackTrace();
 	    }
-	    
+
 	    this.config = new YamlConfiguration();
 	    this.LoadYamls();
     }
-    
-    public ArrayList<PotionEffect> getEffects() 
+
+    public ArrayList<PotionEffect> getEffects()
 	{
 		return this.potionEffects;
 	}
 
-	public boolean getCanDropEquip() 
-	{
-		return this.canDropEquip;
-	}
-	
 	public boolean getCanDropArmor()
 	{
 		return this.canDropArmor;
 	}
-	
+
 	public SpawnConditions getZombieSpawnCondition()
 	{
 		return this.zombieSpawnCondition;
 	}
-	
-	public boolean getcanPickupInventory()
+
+	public boolean getCanPickupInventory()
 	{
 		return this.canPickupInventory;
 	}
-	
+
 	public boolean getcanDropPlayerHead()
 	{
 		return this.canDropPlayerHead;
 	}
-	
+
 	private void FirstRun() throws Exception
 	{
 	    if(!this.configFile.exists())
 	    {
 	        this.configFile.getParentFile().mkdirs();
-	        
+
 	        this.config = new YamlConfiguration();
-	        
+
 	        this.SaveYamls();
-	        
+
 	        this.Copy(this.plugin.getResource("config.yml"), configFile);
 	    }
 	}
 
-	private void Copy(InputStream in, File file) 
+	private void Copy(InputStream in, File file)
 	{
-	    try 
+	    try
 	    {
 	        OutputStream out = new FileOutputStream(file);
 	        byte[] buf = new byte[1024];
 	        int len;
-	        
+
 	        while((len=in.read(buf)) > 0)
 	        {
 	            out.write(buf, 0, len);
 	        }
-	        
+
 	        out.close();
 	        in.close();
-	    } 
-	    catch (Exception e) 
+	    }
+	    catch (Exception e)
 	    {
 	        e.printStackTrace();
 	    }
 	}
-	
-	private void SaveYamls() 
+
+	private void SaveYamls()
 	{
-	    try 
+	    try
 	    {
 	        this.config.save(configFile);
-	    } 
-	    catch (IOException e) 
+	    }
+	    catch (IOException e)
 	    {
 	        e.printStackTrace();
 	    }
 	}
-	
-	private void LoadYamls() 
+
+	private void LoadYamls()
 	{
-	    try 
+	    try
 	    {
 	        this.config.load(configFile);
 	        this.LoadValues();
-	    } 
-	    catch (Exception e) 
+	    }
+	    catch (Exception e)
 	    {
 	        e.printStackTrace();
 	    }
 	}
-	
-	private void LoadValues() 
+
+	private void LoadValues()
 	{
 		this.setPotionEffects();
-		this.setCanDropEquip();
 		this.setCanPickupInventory();
 		this.setCanDropPlayerHead();
 		this.setCanDropArmor();
 		this.setZombieSpawnCondition();
-	}	
-	
-	private void setZombieSpawnCondition() 
+	}
+
+	private void setZombieSpawnCondition()
 	{
 		boolean pvp = this.config.getBoolean("ZombieSpawnOnPvPDeath");
 		boolean pve = this.config.getBoolean("ZombieSpawnOnPvEDeath");
 		boolean env = this.config.getBoolean("ZombieSpawnOnEnvironmentDeath");
-		
+
 		this.zombieSpawnCondition = new SpawnConditions(pvp, pve, env);
 	}
 
-	private void setCanDropArmor() 
+	private void setCanDropArmor()
 	{
 		this.canDropArmor = this.config.getBoolean("CanDropArmor");
 	}
 
-	private void setCanDropPlayerHead() 
+	private void setCanDropPlayerHead()
 	{
 		this.canDropPlayerHead = this.config.getBoolean("CanDropPlayerHead");
 	}
 
-	private void setCanPickupInventory() 
+	private void setCanPickupInventory()
 	{
 		this.canPickupInventory = this.config.getBoolean("CanPickupInventoryAndDrop");
-	}
-
-	private void setCanDropEquip() 
-	{
-		this.canDropEquip = this.config.getBoolean("CanDropEquip");
 	}
 
 	private void setPotionEffects()
 	{
 		this.potionEffects = new ArrayList<PotionEffect>();
-		
+
 		if(this.config.getInt("Effects.SPEED") > 0)
 		{
 			this.potionEffects.add(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, this.config.getInt("Effects.SPEED")));

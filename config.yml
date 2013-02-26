@@ -13,9 +13,9 @@ Effects:
 
 
 # Define whether the spawned Zombie should pickup all Items from the player and drop them on death or not
-# Please note that CanDropEquip affects all other statements
+# The Inventory does not contain the worn Armor
+# The Armor does not contain the Player's head
 
-CanDropEquip: false
 CanPickupInventoryAndDrop: false
 CanDropPlayerHead: false
 CanDropArmor: false

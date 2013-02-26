@@ -44,13 +44,11 @@ public class EntityDeathListener implements Listener
 	        }
 	        else if(this.IsPvEKill(damageCause))
 	        {
-	        	System.out.println("pve");
 		     	this.HandlePlayerDeath(player, event.getDrops());
 	        	return;
 	        }
 	        else if(this.IsEnviromentKill(damageCause))
 			{
-	        	System.out.println("env");
 		     	this.HandlePlayerDeath(player, event.getDrops());
 	        	return;
 			}
@@ -108,24 +106,21 @@ public class EntityDeathListener implements Listener
 
 	private void HandleZombieDeath(Zombie zombie, List<ItemStack> droppedItems)
 	{
-		if(this.configHandler.getCanDropEquip())
+		if(zombie.getEquipment().getHelmet().getType() == Material.SKULL_ITEM)
 		{
-			if(zombie.getEquipment().getHelmet().getType() == Material.SKULL_ITEM)
+			SkullMeta skullmeta = (SkullMeta) zombie.getEquipment().getHelmet().getItemMeta();
+			String owner = skullmeta.getOwner();
+
+			if(this.configHandler.getCanPickupInventory())
 			{
-				SkullMeta skullmeta = (SkullMeta) zombie.getEquipment().getHelmet().getItemMeta();
-				String owner = skullmeta.getOwner();
-
-				if(this.configHandler.getcanPickupInventory())
+				if(this.playerInventory.containsKey(owner))
 				{
-					if(this.playerInventory.containsKey(owner))
+					for(ItemStack item : this.playerInventory.get(owner))
 					{
-						for(ItemStack item : this.playerInventory.get(owner))
-						{
-							droppedItems.add(item);
-						}
-
-						this.playerInventory.remove(owner);
+						droppedItems.add(item);
 					}
+
+					this.playerInventory.remove(owner);
 				}
 			}
 		}
@@ -139,7 +134,7 @@ public class EntityDeathListener implements Listener
 			ZombieHandler zombieHandler = new ZombieHandler(this.configHandler);
 			zombieHandler.EquipZombie(zombie, player.getName(), player.getInventory());
 
-			if(this.configHandler.getCanDropEquip())
+			if(this.configHandler.getCanPickupInventory())
 			{
 				if(player.getInventory().getHelmet() != null)
 				{

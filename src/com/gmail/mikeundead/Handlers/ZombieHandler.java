@@ -24,8 +24,8 @@ public class ZombieHandler
 		this.setBoots(monster, playerInventory);
 		this.setPants(monster, playerInventory);
 		this.setWeapon(monster, playerInventory);
-	
-		if(this.configHandler.getCanDropEquip() && this.configHandler.getCanDropArmor())
+
+		if(this.configHandler.getCanDropArmor())
 		{
 			if(this.configHandler.getcanDropPlayerHead())
 			{
@@ -47,9 +47,9 @@ public class ZombieHandler
 			monster.getEquipment().setLeggingsDropChance(0);
 			monster.getEquipment().setBootsDropChance(0);
 		}
-		
+
 		monster.getEquipment().setItemInHandDropChance(0);
-		
+
 		if(this.configHandler.getEffects().size() > 0)
 		{
 			this.SetPotionEffects(monster);
