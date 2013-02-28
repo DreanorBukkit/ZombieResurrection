@@ -1,9 +1,10 @@
 package com.gmail.mikeundead.Listeners;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
-import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -13,7 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import com.gmail.mikeundead.Handlers.ConfigHandler;
 import com.gmail.mikeundead.Handlers.ZombieHandler;
@@ -21,12 +21,14 @@ import com.gmail.mikeundead.Handlers.ZombieHandler;
 public class EntityDeathListener implements Listener
 {
     private ConfigHandler configHandler;
-	private HashMap<String, ItemStack[]> playerInventory;
+	private HashMap<UUID, ItemStack[]> playerInventory;
+	private ArrayList<UUID> zombieWithInventory;
 
     public EntityDeathListener(ConfigHandler config)
 	{
 		this.configHandler = config;
-		this.playerInventory = new HashMap<String, ItemStack[]>();
+		this.playerInventory = new HashMap<UUID, ItemStack[]>();
+		this.zombieWithInventory = new ArrayList<UUID>();
 	}
 
 	@EventHandler
@@ -106,23 +108,18 @@ public class EntityDeathListener implements Listener
 
 	private void HandleZombieDeath(Zombie zombie, List<ItemStack> droppedItems)
 	{
-		if(zombie.getEquipment().getHelmet().getType() == Material.SKULL_ITEM)
+		if(this.zombieWithInventory.contains(zombie.getUniqueId()))
 		{
-			SkullMeta skullmeta = (SkullMeta) zombie.getEquipment().getHelmet().getItemMeta();
-			String owner = skullmeta.getOwner();
-
 			if(this.configHandler.getCanPickupInventory())
 			{
-				if(this.playerInventory.containsKey(owner))
+				for(ItemStack item : this.playerInventory.get(zombie.getUniqueId()))
 				{
-					for(ItemStack item : this.playerInventory.get(owner))
-					{
-						droppedItems.add(item);
-					}
-
-					this.playerInventory.remove(owner);
+					droppedItems.add(item);
 				}
+
+				this.playerInventory.remove(zombie.getUniqueId());
 			}
+			this.zombieWithInventory.remove(zombie.getUniqueId());
 		}
 	}
 
@@ -131,6 +128,8 @@ public class EntityDeathListener implements Listener
 		if(player.hasPermission("zombieresurrection.zombiespawn"))
 		{
 			LivingEntity zombie = (LivingEntity) player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
+			this.zombieWithInventory.add(zombie.getUniqueId());
+
 			ZombieHandler zombieHandler = new ZombieHandler(this.configHandler);
 			zombieHandler.EquipZombie(zombie, player.getName(), player.getInventory());
 
@@ -141,7 +140,7 @@ public class EntityDeathListener implements Listener
 					player.getInventory().addItem(player.getInventory().getHelmet());
 				}
 
-				this.playerInventory.put(player.getName(), player.getInventory().getContents());
+				this.playerInventory.put(zombie.getUniqueId(), player.getInventory().getContents());
 				droppedItems.clear();
 			}
 		}
