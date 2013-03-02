@@ -167,6 +167,34 @@ public class ConfigHandler
 	{
 		this.potionEffects = new ArrayList<PotionEffect>();
 
+		if(this.config.getInt("Effects.POISON") > 0)
+		{
+			this.potionEffects.add(new PotionEffect(PotionEffectType.POISON, Integer.MAX_VALUE, this.config.getInt("Effects.POISON")));
+		}
+		if(this.config.getInt("Effects.REGENERATION") > 0)
+		{
+			this.potionEffects.add(new PotionEffect(PotionEffectType.REGENERATION, Integer.MAX_VALUE, this.config.getInt("Effects.REGENERATION")));
+		}
+		if(this.config.getInt("Effects.INVISIBILITY") > 0)
+		{
+			this.potionEffects.add(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, this.config.getInt("Effects.INVISIBILITY")));
+		}
+		if(this.config.getInt("Effects.WATER_BREATHING") > 0)
+		{
+			this.potionEffects.add(new PotionEffect(PotionEffectType.WATER_BREATHING, Integer.MAX_VALUE, this.config.getInt("Effects.WATER_BREATHING")));
+		}
+		if(this.config.getInt("Effects.WEAKNESS") > 0)
+		{
+			this.potionEffects.add(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, this.config.getInt("Effects.WEAKNESS")));
+		}
+		if(this.config.getInt("Effects.BLINDNESS") > 0)
+		{
+			this.potionEffects.add(new PotionEffect(PotionEffectType.BLINDNESS, Integer.MAX_VALUE, this.config.getInt("Effects.BLINDNESS")));
+		}
+		if(this.config.getInt("Effects.SLOW") > 0)
+		{
+			this.potionEffects.add(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, this.config.getInt("Effects.SLOW")));
+		}
 		if(this.config.getInt("Effects.SPEED") > 0)
 		{
 			this.potionEffects.add(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, this.config.getInt("Effects.SPEED")));

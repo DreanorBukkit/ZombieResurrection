@@ -4,13 +4,18 @@
 # They can still move but can't do anything else.
 
 Effects:
-  SPEED: 0
-  SLOW: 0
-  INCREASE_DAMAGE: 0
+  BLINDNESS: 0
   DAMAGE_RESISTANCE: 0
   FIRE_RESISTANCE: 0
+  INCREASE_DAMAGE: 0
+  INVISIBILITY: 0
   JUMP: 0
-
+  POISON: 0
+  REGENERATION: 0
+  SLOW: 0
+  SPEED: 0
+  WATER_BREATHING: 0
+  WEAKNESS: 0
 
 # Define whether the spawned Zombie should pickup all Items from the player and drop them on death or not
 # The Inventory does not contain the worn Armor
