@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import multiworld.api.MultiWorldAPI;
+import multiworld.api.MultiWorldWorldData;
+import multiworld.api.flag.FlagName;
+
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -23,6 +27,7 @@ public class EntityDeathListener implements Listener
     private ConfigHandler configHandler;
 	private HashMap<UUID, ItemStack[]> playerInventory;
 	private ArrayList<UUID> zombieWithInventory;
+	private MultiWorldAPI multiWorld;
 
     public EntityDeathListener(ConfigHandler config)
 	{
@@ -34,6 +39,23 @@ public class EntityDeathListener implements Listener
 	@EventHandler
     public void onEntityDeath(EntityDeathEvent event)
     {
+		if(this.multiWorld != null)
+		{
+			MultiWorldWorldData worldData = this.multiWorld.getWorld(event.getEntity().getWorld().getName());
+
+			if(worldData.getOptionValue(FlagName.SPAWNMONSTER))
+			{
+				this.HandleEntityDeath(event);
+			}
+		}
+		else
+		{
+			this.HandleEntityDeath(event);
+		}
+	}
+
+	private void HandleEntityDeath(EntityDeathEvent event)
+	{
 		if(event.getEntity() instanceof Player)
 		{
 			Player player = (Player) event.getEntity();
@@ -144,5 +166,10 @@ public class EntityDeathListener implements Listener
 				droppedItems.clear();
 			}
 		}
+	}
+
+	public void SetMultiWorld(MultiWorldAPI multiWorld)
+	{
+		this.multiWorld = multiWorld;
 	}
 }
