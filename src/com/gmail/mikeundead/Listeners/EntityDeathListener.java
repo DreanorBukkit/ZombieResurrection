@@ -3,8 +3,10 @@ package com.gmail.mikeundead.Listeners;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -13,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.gmail.mikeundead.Handlers.ConfigHandler;
@@ -23,12 +26,45 @@ public class EntityDeathListener implements Listener
     private ConfigHandler configHandler;
 	private HashMap<UUID, ItemStack[]> playerInventory;
 	private ArrayList<UUID> zombieWithInventory;
-
+	private HashMap<LivingEntity, Location> zombieChunks;
     public EntityDeathListener(ConfigHandler config)
 	{
 		this.configHandler = config;
 		this.playerInventory = new HashMap<UUID, ItemStack[]>();
 		this.zombieWithInventory = new ArrayList<UUID>();
+		this.zombieChunks = new HashMap<LivingEntity, Location>();
+	}
+
+    //ToDo: Relocate Method
+	@EventHandler
+	public void onChunkLoad(ChunkLoadEvent event)
+	{
+		for(Entry<LivingEntity, Location> entry : this.zombieChunks.entrySet())
+		{
+			if(entry.getValue().getChunk().equals(event.getChunk()))
+			{
+				LivingEntity zombie = (LivingEntity) event.getWorld().spawnEntity(entry.getValue(), EntityType.ZOMBIE);
+
+				zombie.getEquipment().setBoots(entry.getKey().getEquipment().getBoots());
+				zombie.getEquipment().setChestplate(entry.getKey().getEquipment().getChestplate());
+				zombie.getEquipment().setHelmet(entry.getKey().getEquipment().getHelmet());
+				zombie.getEquipment().setLeggings(entry.getKey().getEquipment().getLeggings());
+				zombie.getEquipment().setItemInHand(entry.getKey().getEquipment().getItemInHand());
+
+				if(this.zombieWithInventory.contains(entry.getKey().getUniqueId()))
+				{
+					this.zombieWithInventory.remove(entry.getKey().getUniqueId());
+					this.zombieWithInventory.add(zombie.getUniqueId());
+				}
+
+				if(this.playerInventory.containsKey(entry.getKey().getUniqueId()))
+				{
+					ItemStack[] inventory = this.playerInventory.get(entry.getKey().getUniqueId());
+					this.playerInventory.remove(entry.getKey().getUniqueId());
+					this.playerInventory.put(zombie.getUniqueId(), inventory);
+				}
+			}
+		}
 	}
 
 	@EventHandler
@@ -115,11 +151,11 @@ public class EntityDeathListener implements Listener
 				for(ItemStack item : this.playerInventory.get(zombie.getUniqueId()))
 				{
 					droppedItems.add(item);
-				}
-
-				this.playerInventory.remove(zombie.getUniqueId());
+				};
 			}
 			this.zombieWithInventory.remove(zombie.getUniqueId());
+			System.out.println("zombie removed");
+			this.zombieChunks.remove(zombie);
 		}
 	}
 
@@ -143,6 +179,8 @@ public class EntityDeathListener implements Listener
 				this.playerInventory.put(zombie.getUniqueId(), player.getInventory().getContents());
 				droppedItems.clear();
 			}
+
+			this.zombieChunks.put(zombie, zombie.getLocation());
 		}
 	}
 }
