@@ -1,3 +1,4 @@
+############## Effects ##############
 # Add Additional Effects to the spawned Zombie 
 # BE VERY CAREFUL WITH SETTING THE EFFECTS as example: 
 # if Increase_Damage is too high players die instantly without getting a deathscreen.
@@ -17,6 +18,8 @@ Effects:
   WATER_BREATHING: 0
   WEAKNESS: 0
 
+
+############## Drops ##############
 # Define whether the spawned Zombie should pickup all Items from the player and drop them on death or not
 # The Inventory does not contain the worn Armor
 # The Armor does not contain the Player's head
@@ -26,6 +29,7 @@ CanDropPlayerHead: false
 CanDropArmor: false
 
 
+############## Spawn Conditions ##############
 # Define under which condition a Zombie should spawn
 # Having all 3 Deathtypes will spawn a Zombie on every death
 # Make sure that at least one condition is true, otherwise there will be no spawn at all
@@ -33,3 +37,10 @@ CanDropArmor: false
 ZombieSpawnOnPvPDeath: true
 ZombieSpawnOnPvEDeath: true
 ZombieSpawnOnEnvironmentDeath: true
+
+
+############## World Support ##############
+# All available worlds will be added to the list automatically
+# If you want to deny the plugin in a specific world, just remove it or add other worlds as you like
+ActivatedInWorld:
+- 

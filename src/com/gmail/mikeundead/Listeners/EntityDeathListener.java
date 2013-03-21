@@ -110,7 +110,6 @@ public class EntityDeathListener implements Listener
 				};
 			}
 			this.model.getZombiesWithInventory().remove(zombie.getUniqueId());
-			System.out.println("zombie removed");
 			this.model.getZombieChunks().remove(zombie);
 		}
 	}
@@ -119,24 +118,27 @@ public class EntityDeathListener implements Listener
 	{
 		if(player.hasPermission("zombieresurrection.zombiespawn"))
 		{
-			LivingEntity zombie = (LivingEntity) player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
-			this.model.getZombiesWithInventory().add(zombie.getUniqueId());
-
-			ZombieHandler zombieHandler = new ZombieHandler(this.model.getConfig());
-			zombieHandler.EquipZombie(zombie, player.getName(), player.getInventory());
-
-			if(this.model.getConfig().getCanPickupInventory())
+			if(this.model.getConfig().getActivatedInWorld().contains(player.getWorld()))
 			{
-				if(player.getInventory().getHelmet() != null)
+				LivingEntity zombie = (LivingEntity) player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
+				this.model.getZombiesWithInventory().add(zombie.getUniqueId());
+
+				ZombieHandler zombieHandler = new ZombieHandler(this.model.getConfig());
+				zombieHandler.EquipZombie(zombie, player.getName(), player.getInventory());
+
+				if(this.model.getConfig().getCanPickupInventory())
 				{
-					player.getInventory().addItem(player.getInventory().getHelmet());
+					if(player.getInventory().getHelmet() != null)
+					{
+						player.getInventory().addItem(player.getInventory().getHelmet());
+					}
+
+					this.model.getPlayerInventory().put(zombie.getUniqueId(), player.getInventory().getContents());
+					droppedItems.clear();
 				}
 
-				this.model.getPlayerInventory().put(zombie.getUniqueId(), player.getInventory().getContents());
-				droppedItems.clear();
+				this.model.getZombieChunks().put(zombie, zombie.getLocation());
 			}
-
-			this.model.getZombieChunks().put(zombie, zombie.getLocation());
 		}
 	}
 }

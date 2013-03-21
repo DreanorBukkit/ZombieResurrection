@@ -5,8 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.potion.PotionEffect;
@@ -25,6 +28,7 @@ public class ConfigHandler
 	private boolean canPickupInventory;
 	private boolean canDropPlayerHead;
 	private SpawnConditions zombieSpawnCondition;
+	private ArrayList<World> activatedInWorld;
 
     public ConfigHandler(ZombieResurrection plugin)
     {
@@ -42,6 +46,11 @@ public class ConfigHandler
 
 	    this.config = new YamlConfiguration();
 	    this.LoadYamls();
+    }
+
+    public ArrayList<World> getActivatedInWorld()
+    {
+    	return this.activatedInWorld;
     }
 
     public ArrayList<PotionEffect> getEffects()
@@ -96,6 +105,18 @@ public class ConfigHandler
 	            out.write(buf, 0, len);
 	        }
 
+	        Writer s = new OutputStreamWriter(out);
+	        for(World name : this.plugin.getServer().getWorlds())
+	        {
+	            s.write(name.getName());
+	            s.write(System.getProperty("line.separator"));
+	            if(this.plugin.getServer().getWorlds().indexOf(name) != this.plugin.getServer().getWorlds().size() -1)
+	            {
+	            	s.write("- ");
+	            }
+	        }
+
+	        s.close();
 	        out.close();
 	        in.close();
 	    }
@@ -137,6 +158,17 @@ public class ConfigHandler
 		this.setCanDropPlayerHead();
 		this.setCanDropArmor();
 		this.setZombieSpawnCondition();
+		this.setEnabledInWorlds();
+	}
+
+	private void setEnabledInWorlds()
+	{
+		this.activatedInWorld = new ArrayList<World>();
+
+		for(String world : this.config.getStringList("ActivatedInWorld"))
+		{
+			this.activatedInWorld.add(this.plugin.getServer().getWorld(world));
+		}
 	}
 
 	private void setZombieSpawnCondition()
