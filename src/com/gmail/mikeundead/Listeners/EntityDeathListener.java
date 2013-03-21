@@ -1,12 +1,7 @@
 package com.gmail.mikeundead.Listeners;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
 
-import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -15,56 +10,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.gmail.mikeundead.Handlers.ConfigHandler;
 import com.gmail.mikeundead.Handlers.ZombieHandler;
+import com.gmail.mikeundead.util.EntityDeathListenerModel;
 
 public class EntityDeathListener implements Listener
 {
-    private ConfigHandler configHandler;
-	private HashMap<UUID, ItemStack[]> playerInventory;
-	private ArrayList<UUID> zombieWithInventory;
-	private HashMap<LivingEntity, Location> zombieChunks;
-    public EntityDeathListener(ConfigHandler config)
+    private EntityDeathListenerModel model;
+    public EntityDeathListener(EntityDeathListenerModel model)
 	{
-		this.configHandler = config;
-		this.playerInventory = new HashMap<UUID, ItemStack[]>();
-		this.zombieWithInventory = new ArrayList<UUID>();
-		this.zombieChunks = new HashMap<LivingEntity, Location>();
-	}
-
-    //ToDo: Relocate Method
-	@EventHandler
-	public void onChunkLoad(ChunkLoadEvent event)
-	{
-		for(Entry<LivingEntity, Location> entry : this.zombieChunks.entrySet())
-		{
-			if(entry.getValue().getChunk().equals(event.getChunk()))
-			{
-				LivingEntity zombie = (LivingEntity) event.getWorld().spawnEntity(entry.getValue(), EntityType.ZOMBIE);
-
-				zombie.getEquipment().setBoots(entry.getKey().getEquipment().getBoots());
-				zombie.getEquipment().setChestplate(entry.getKey().getEquipment().getChestplate());
-				zombie.getEquipment().setHelmet(entry.getKey().getEquipment().getHelmet());
-				zombie.getEquipment().setLeggings(entry.getKey().getEquipment().getLeggings());
-				zombie.getEquipment().setItemInHand(entry.getKey().getEquipment().getItemInHand());
-
-				if(this.zombieWithInventory.contains(entry.getKey().getUniqueId()))
-				{
-					this.zombieWithInventory.remove(entry.getKey().getUniqueId());
-					this.zombieWithInventory.add(zombie.getUniqueId());
-				}
-
-				if(this.playerInventory.containsKey(entry.getKey().getUniqueId()))
-				{
-					ItemStack[] inventory = this.playerInventory.get(entry.getKey().getUniqueId());
-					this.playerInventory.remove(entry.getKey().getUniqueId());
-					this.playerInventory.put(zombie.getUniqueId(), inventory);
-				}
-			}
-		}
+		this.model = model;
 	}
 
 	@EventHandler
@@ -100,7 +56,7 @@ public class EntityDeathListener implements Listener
 
 	private boolean IsPvPKill(DamageCause damageCause, Player player)
 	{
-		boolean pvp = this.configHandler.getZombieSpawnCondition().getPvP();
+		boolean pvp = this.model.getConfig().getZombieSpawnCondition().getPvP();
 
 		if(pvp && player.getKiller() instanceof Player)
 		{
@@ -112,7 +68,7 @@ public class EntityDeathListener implements Listener
 
 	private boolean IsPvEKill(DamageCause damageCause)
 	{
-		boolean pve = this.configHandler.getZombieSpawnCondition().getPvE();
+		boolean pve = this.model.getConfig().getZombieSpawnCondition().getPvE();
 
 		if(pve)
 		{
@@ -127,7 +83,7 @@ public class EntityDeathListener implements Listener
 
 	private boolean IsEnviromentKill(DamageCause damageCause)
 	{
-		boolean env = this.configHandler.getZombieSpawnCondition().getEnv();
+		boolean env = this.model.getConfig().getZombieSpawnCondition().getEnv();
 
 		if(env)
 		{
@@ -144,18 +100,18 @@ public class EntityDeathListener implements Listener
 
 	private void HandleZombieDeath(Zombie zombie, List<ItemStack> droppedItems)
 	{
-		if(this.zombieWithInventory.contains(zombie.getUniqueId()))
+		if(this.model.getZombiesWithInventory().contains(zombie.getUniqueId()))
 		{
-			if(this.configHandler.getCanPickupInventory())
+			if(this.model.getConfig().getCanPickupInventory())
 			{
-				for(ItemStack item : this.playerInventory.get(zombie.getUniqueId()))
+				for(ItemStack item : this.model.getPlayerInventory().get(zombie.getUniqueId()))
 				{
 					droppedItems.add(item);
 				};
 			}
-			this.zombieWithInventory.remove(zombie.getUniqueId());
+			this.model.getZombiesWithInventory().remove(zombie.getUniqueId());
 			System.out.println("zombie removed");
-			this.zombieChunks.remove(zombie);
+			this.model.getZombieChunks().remove(zombie);
 		}
 	}
 
@@ -164,23 +120,23 @@ public class EntityDeathListener implements Listener
 		if(player.hasPermission("zombieresurrection.zombiespawn"))
 		{
 			LivingEntity zombie = (LivingEntity) player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
-			this.zombieWithInventory.add(zombie.getUniqueId());
+			this.model.getZombiesWithInventory().add(zombie.getUniqueId());
 
-			ZombieHandler zombieHandler = new ZombieHandler(this.configHandler);
+			ZombieHandler zombieHandler = new ZombieHandler(this.model.getConfig());
 			zombieHandler.EquipZombie(zombie, player.getName(), player.getInventory());
 
-			if(this.configHandler.getCanPickupInventory())
+			if(this.model.getConfig().getCanPickupInventory())
 			{
 				if(player.getInventory().getHelmet() != null)
 				{
 					player.getInventory().addItem(player.getInventory().getHelmet());
 				}
 
-				this.playerInventory.put(zombie.getUniqueId(), player.getInventory().getContents());
+				this.model.getPlayerInventory().put(zombie.getUniqueId(), player.getInventory().getContents());
 				droppedItems.clear();
 			}
 
-			this.zombieChunks.put(zombie, zombie.getLocation());
+			this.model.getZombieChunks().put(zombie, zombie.getLocation());
 		}
 	}
 }
