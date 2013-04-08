@@ -29,6 +29,9 @@ public class ConfigHandler
 	private boolean canDropPlayerHead;
 	private SpawnConditions zombieSpawnCondition;
 	private ArrayList<World> activatedInWorld;
+	private String zombieName;
+	private double zombieSpawnChance;
+	private double playerHeadDropChance;
 
     public ConfigHandler(ZombieResurrection plugin)
     {
@@ -73,9 +76,24 @@ public class ConfigHandler
 		return this.canPickupInventory;
 	}
 
-	public boolean getcanDropPlayerHead()
+	public boolean getCanDropPlayerHead()
 	{
 		return this.canDropPlayerHead;
+	}
+
+	public String getZombieName()
+	{
+		return this.zombieName;
+	}
+
+	public double getZombieSpawnChance()
+	{
+		return this.zombieSpawnChance;
+	}
+
+	public double getPlayerHeadDropChance()
+	{
+		return this.playerHeadDropChance;
 	}
 
 	private void FirstRun() throws Exception
@@ -159,6 +177,24 @@ public class ConfigHandler
 		this.setCanDropArmor();
 		this.setZombieSpawnCondition();
 		this.setEnabledInWorlds();
+		this.setZombieName();
+		this.setZombieSpawnChance();
+		this.setPlayerHeadDropChance();
+	}
+
+	private void setPlayerHeadDropChance()
+	{
+		this.playerHeadDropChance = this.config.getDouble("PlayerHeadDropChance");
+	}
+
+	private void setZombieSpawnChance()
+	{
+		this.zombieSpawnChance = this.config.getDouble("ZombieSpawnChance");
+	}
+
+	private void setZombieName()
+	{
+		this.zombieName = this.config.getString("ZombieName");
 	}
 
 	private void setEnabledInWorlds()

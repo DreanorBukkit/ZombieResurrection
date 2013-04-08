@@ -1,6 +1,7 @@
 package com.gmail.mikeundead.Listeners;
 
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -120,24 +121,31 @@ public class EntityDeathListener implements Listener
 		{
 			if(this.model.getConfig().getActivatedInWorld().contains(player.getWorld()))
 			{
-				LivingEntity zombie = (LivingEntity) player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
-				this.model.getZombiesWithInventory().add(zombie.getUniqueId());
+				double spawnChance = this.model.getConfig().getZombieSpawnChance();
 
-				ZombieHandler zombieHandler = new ZombieHandler(this.model.getConfig());
-				zombieHandler.EquipZombie(zombie, player.getName(), player.getInventory());
+				double chance = new Random().nextInt(100);
 
-				if(this.model.getConfig().getCanPickupInventory())
+				if(chance <= spawnChance)
 				{
-					if(player.getInventory().getHelmet() != null)
+					LivingEntity zombie = (LivingEntity) player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
+					this.model.getZombiesWithInventory().add(zombie.getUniqueId());
+
+					ZombieHandler zombieHandler = new ZombieHandler(this.model.getConfig());
+					zombieHandler.EquipZombie(zombie, player.getName(), player.getInventory());
+
+					if(this.model.getConfig().getCanPickupInventory())
 					{
-						player.getInventory().addItem(player.getInventory().getHelmet());
+						if(player.getInventory().getHelmet() != null)
+						{
+							player.getInventory().addItem(player.getInventory().getHelmet());
+						}
+
+						this.model.getPlayerInventory().put(zombie.getUniqueId(), player.getInventory().getContents());
+						droppedItems.clear();
 					}
 
-					this.model.getPlayerInventory().put(zombie.getUniqueId(), player.getInventory().getContents());
-					droppedItems.clear();
+					this.model.getZombieChunks().put(zombie, zombie.getLocation());
 				}
-
-				this.model.getZombieChunks().put(zombie, zombie.getLocation());
 			}
 		}
 	}

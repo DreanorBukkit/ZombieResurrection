@@ -19,6 +19,10 @@ public class ZombieHandler
 
 	public void EquipZombie(LivingEntity monster, String playername, PlayerInventory playerInventory)
 	{
+		String zombieName = this.configHandler.getZombieName().replace("%playerName%", playername);
+
+		monster.setCustomName(zombieName);
+		monster.setCustomNameVisible(true);
 		this.setHelmet(monster, playername);
 		this.setChestplate(monster, playerInventory);
 		this.setBoots(monster, playerInventory);
@@ -27,9 +31,9 @@ public class ZombieHandler
 
 		if(this.configHandler.getCanDropArmor())
 		{
-			if(this.configHandler.getcanDropPlayerHead())
+			if(this.configHandler.getCanDropPlayerHead())
 			{
-				monster.getEquipment().setHelmetDropChance(100);
+				monster.getEquipment().setHelmetDropChance((float) this.configHandler.getPlayerHeadDropChance());
 			}
 			else
 			{
