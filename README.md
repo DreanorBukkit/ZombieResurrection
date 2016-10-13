@@ -18,6 +18,7 @@ v1.3.0 Compatible with: DB 1.5.1-R0.2
 
 ## Permission nodes
 zombieresurrection.* default: ops
+
 zombieresurrection.spawnzombie default: true
 
 
